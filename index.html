@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Energy Conservation — Interactive Poster</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,600;1,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --green: #00ff87;
+    --green-dim: #00c96a;
+    --yellow: #f5e642;
+    --orange: #ff7a2f;
+    --red: #ff3b3b;
+    --white: #f0ede6;
+    --gray: #1e1e1e;
+    --gray2: #2a2a2a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 75% 50%, rgba(0,255,135,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 60px 80px 80px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .kicker {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 9vw, 140px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    color: var(--white);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .hero h1 span {
+    color: var(--green);
+    display: block;
+  }
+
+  .hero-sub {
+    font-size: 16px;
+    line-height: 1.7;
+    color: rgba(240,237,230,0.6);
+    max-width: 380px;
+    margin-top: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-stat-row {
+    display: flex;
+    gap: 40px;
+    margin-top: 52px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+
+  .hero-stat h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    color: var(--green);
+    line-height: 1;
+  }
+
+  .hero-stat p {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(240,237,230,0.45);
+    margin-top: 4px;
+  }
+
+  .hero-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 60px 60px 60px 20px;
+    opacity: 0;
+    animation: fadeIn 1.2s 0.5s forwards;
+  }
+
+  /* ── BOLT SVG ── */
+  .bolt-wrap {
+    position: relative;
+    width: 340px;
+    height: 340px;
+  }
+
+  .bolt-ring {
+    position: absolute;
+    inset: -30px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,255,135,0.15);
+    animation: spinSlow 20s linear infinite;
+  }
+
+  .bolt-ring::before {
+    content: '';
+    position: absolute;
+    top: -4px; left: 50%;
+    transform: translateX(-50%);
+    width: 8px; height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 16px var(--green);
+  }
+
+  .bolt-ring-2 {
+    position: absolute;
+    inset: -70px;
+    border-radius: 50%;
+    border: 1px dashed rgba(0,255,135,0.08);
+    animation: spinSlow 35s linear infinite reverse;
+  }
+
+  .bolt-bg {
+    width: 340px;
+    height: 340px;
+    background: radial-gradient(circle at 50% 50%, rgba(0,255,135,0.12) 0%, rgba(0,255,135,0.03) 50%, transparent 70%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .bolt-svg {
+    filter: drop-shadow(0 0 30px rgba(0,255,135,0.6)) drop-shadow(0 0 80px rgba(0,255,135,0.2));
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  /* ── SECTION LABELS ── */
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 16px;
+  }
+
+  /* ── DIVIDER ── */
+  .ticker {
+    background: var(--green);
+    color: var(--black);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    padding: 18px 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .ticker-inner {
+    display: inline-block;
+    animation: tickerScroll 22s linear infinite;
+  }
+
+  /* ── STATS GRID ── */
+  .stats-section {
+    padding: 100px 80px;
+    position: relative;
+  }
+
+  .stats-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,255,135,0.3), transparent);
+  }
+
+  .stats-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 60px;
+  }
+
+  .stats-header h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 6vw, 90px);
+    line-height: 0.9;
+    max-width: 500px;
+  }
+
+  .stats-header h2 em {
+    color: var(--green);
+    font-style: normal;
+  }
+
+  .stats-note {
+    font-size: 13px;
+    color: rgba(240,237,230,0.4);
+    max-width: 200px;
+    text-align: right;
+    line-height: 1.6;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+  }
+
+  .stat-card {
+    background: var(--gray);
+    padding: 40px 30px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 3px;
+    background: var(--green);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+
+  .stat-card:hover { background: var(--gray2); }
+  .stat-card:hover::after { transform: scaleX(1); }
+
+  .card-icon {
+    font-size: 32px;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .card-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    color: var(--green);
+    line-height: 1;
+    display: block;
+  }
+
+  .card-unit {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: rgba(240,237,230,0.4);
+    letter-spacing: 1px;
+    margin-top: 2px;
+    display: block;
+  }
+
+  .card-label {
+    font-size: 14px;
+    color: rgba(240,237,230,0.7);
+    line-height: 1.5;
+    margin-top: 12px;
+  }
+
+  /* ── BAR CHART ── */
+  .chart-section {
+    padding: 0 80px 100px;
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  .chart-box {
+    background: var(--gray);
+    padding: 48px 40px;
+  }
+
+  .chart-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    margin-bottom: 8px;
+  }
+
+  .chart-sub {
+    font-size: 13px;
+    color: rgba(240,237,230,0.4);
+    margin-bottom: 40px;
+  }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .bar-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: rgba(240,237,230,0.6);
+    width: 90px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 14px;
+    background: rgba(255,255,255,0.05);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    width: 0%;
+    transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+  }
+
+  .bar-fill::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 20px;
+    background: rgba(255,255,255,0.3);
+  }
+
+  .bar-val {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    width: 38px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ── DONUT CHART ── */
+  .donut-box {
+    background: var(--gray);
+    padding: 48px 40px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .donut-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0 24px;
+    position: relative;
+  }
+
+  .donut-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    text-align: center;
+  }
+
+  .donut-center-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    color: var(--green);
+    line-height: 1;
+  }
+
+  .donut-center-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: rgba(240,237,230,0.4);
+    text-transform: uppercase;
+  }
+
+  .donut-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .legend-name {
+    font-size: 13px;
+    color: rgba(240,237,230,0.7);
+    flex: 1;
+  }
+
+  .legend-pct {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--white);
+  }
+
+  /* ── TIPS SECTION ── */
+  .tips-section {
+    padding: 100px 80px;
+    background: linear-gradient(180deg, var(--black) 0%, #0d1a10 100%);
+    position: relative;
+  }
+
+  .tips-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,255,135,0.3), transparent);
+  }
+
+  .tips-header {
+    margin-bottom: 60px;
+  }
+
+  .tips-header h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 7vw, 100px);
+    line-height: 0.9;
+  }
+
+  .tips-header h2 span {
+    color: var(--green);
+  }
+
+  .tips-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .tip-card {
+    background: rgba(0,255,135,0.04);
+    border: 1px solid rgba(0,255,135,0.1);
+    padding: 44px 36px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .tip-card:hover {
+    background: rgba(0,255,135,0.08);
+    border-color: rgba(0,255,135,0.3);
+    transform: translateY(-4px);
+  }
+
+  .tip-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 80px;
+    color: rgba(0,255,135,0.1);
+    line-height: 1;
+    position: absolute;
+    top: 20px; right: 24px;
+  }
+
+  .tip-icon {
+    font-size: 38px;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .tip-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    color: var(--white);
+  }
+
+  .tip-desc {
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(240,237,230,0.55);
+  }
+
+  .tip-saving {
+    display: inline-block;
+    margin-top: 20px;
+    background: var(--green);
+    color: var(--black);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 6px 14px;
+  }
+
+  /* ── IMPACT METER ── */
+  .impact-section {
+    padding: 100px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .impact-left h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 7vw, 100px);
+    line-height: 0.9;
+    margin-bottom: 24px;
+  }
+
+  .impact-left h2 span { color: var(--green); }
+
+  .impact-left p {
+    font-size: 15px;
+    line-height: 1.8;
+    color: rgba(240,237,230,0.55);
+    max-width: 420px;
+  }
+
+  .impact-meter-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .meter-row {
+    position: relative;
+  }
+
+  .meter-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .meter-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(240,237,230,0.6);
+  }
+
+  .meter-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--green);
+  }
+
+  .meter-track {
+    height: 8px;
+    background: rgba(255,255,255,0.06);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .meter-fill {
+    height: 100%;
+    width: 0%;
+    transition: width 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+  }
+
+  .meter-fill.green { background: linear-gradient(90deg, #00c96a, #00ff87); }
+  .meter-fill.yellow { background: linear-gradient(90deg, #c9a800, #f5e642); }
+  .meter-fill.orange { background: linear-gradient(90deg, #c95a00, #ff7a2f); }
+
+  /* ── FOOTER CTA ── */
+  .footer-cta {
+    background: var(--green);
+    color: var(--black);
+    padding: 80px 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+  }
+
+  .footer-cta h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 7vw, 100px);
+    line-height: 0.9;
+    max-width: 600px;
+  }
+
+  .cta-right {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-items: flex-end;
+  }
+
+  .cta-btn {
+    background: var(--black);
+    color: var(--green);
+    border: none;
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 20px 40px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .cta-btn:hover {
+    background: #111;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  }
+
+  .cta-note {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(10,10,10,0.5);
+  }
+
+  /* ── QUIZ SECTION ── */
+  .quiz-section {
+    padding: 100px 80px;
+    background: var(--gray);
+    position: relative;
+  }
+
+  .quiz-wrap {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .quiz-wrap h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(44px, 6vw, 80px);
+    line-height: 0.9;
+    margin-bottom: 12px;
+  }
+
+  .quiz-wrap h2 span { color: var(--green); }
+
+  .quiz-wrap p {
+    font-size: 14px;
+    color: rgba(240,237,230,0.5);
+    margin-bottom: 48px;
+  }
+
+  .quiz-question {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 28px;
+    min-height: 60px;
+    line-height: 1.5;
+  }
+
+  .quiz-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .quiz-opt {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 18px 20px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.25s;
+  }
+
+  .quiz-opt:hover {
+    background: rgba(0,255,135,0.08);
+    border-color: var(--green);
+  }
+
+  .quiz-opt.correct {
+    background: rgba(0,255,135,0.15);
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  .quiz-opt.wrong {
+    background: rgba(255,59,59,0.12);
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  .quiz-feedback {
+    min-height: 40px;
+    font-size: 14px;
+    color: rgba(240,237,230,0.6);
+    margin-bottom: 20px;
+  }
+
+  .quiz-next {
+    background: var(--green);
+    color: var(--black);
+    border: none;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 16px 36px;
+    cursor: pointer;
+    display: none;
+    transition: all 0.3s;
+  }
+
+  .quiz-next:hover { background: var(--green-dim); }
+  .quiz-progress {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: rgba(240,237,230,0.3);
+    letter-spacing: 2px;
+    margin-top: 24px;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(30px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity:0; }
+    to   { opacity:1; }
+  }
+
+  @keyframes spinSlow {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { filter: drop-shadow(0 0 20px rgba(0,255,135,0.5)) drop-shadow(0 0 60px rgba(0,255,135,0.15)); }
+    50%       { filter: drop-shadow(0 0 40px rgba(0,255,135,0.8)) drop-shadow(0 0 100px rgba(0,255,135,0.3)); }
+  }
+
+  @keyframes tickerScroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .hero-left { padding: 80px 40px; }
+    .stats-section, .chart-section, .tips-section, .impact-section { padding-left: 32px; padding-right: 32px; }
+    .cards-grid { grid-template-columns: 1fr 1fr; }
+    .tips-grid { grid-template-columns: 1fr; }
+    .impact-section { grid-template-columns: 1fr; }
+    .chart-section { grid-template-columns: 1fr; }
+    .footer-cta { flex-direction: column; text-align: center; }
+    .cta-right { align-items: center; }
+    .quiz-options { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="kicker">🌍 Global Energy Crisis — Act Now</p>
+    <h1>SAVE<span>ENERGY.<br>SAVE</span>EARTH.</h1>
+    <p class="hero-sub">Every watt counts. Small changes in daily habits can slash your energy bill by up to 40% — and cut your household's carbon footprint significantly.</p>
+    <div class="hero-stat-row">
+      <div class="hero-stat">
+        <h3 class="counter" data-target="40">0</h3>
+        <p>% avg. savings possible</p>
+      </div>
+      <div class="hero-stat">
+        <h3 class="counter" data-target="2.3">0</h3>
+        <p>Tons CO₂ per household/yr</p>
+      </div>
+      <div class="hero-stat">
+        <h3 class="counter" data-target="1700">0</h3>
+        <p>$ annual energy bill avg.</p>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="bolt-wrap">
+      <div class="bolt-ring"></div>
+      <div class="bolt-ring-2"></div>
+      <div class="bolt-bg">
+        <svg class="bolt-svg" width="160" height="220" viewBox="0 0 160 220" fill="none">
+          <path d="M95 10L20 120H75L55 210L150 90H95L95 10Z"
+                fill="#00ff87" opacity="0.95"/>
+          <path d="M95 10L20 120H75L55 210L150 90H95L95 10Z"
+                fill="url(#boltGrad)"/>
+          <defs>
+            <linearGradient id="boltGrad" x1="85" y1="10" x2="85" y2="210" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#f5e642" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="#00ff87" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TICKER ══ -->
+<div class="ticker">
+  <span class="ticker-inner">
+    ⚡ SWITCH TO LED &nbsp;·&nbsp; UNPLUG STANDBY DEVICES &nbsp;·&nbsp; USE SMART THERMOSTATS &nbsp;·&nbsp; INSULATE YOUR HOME &nbsp;·&nbsp; SOLAR IS THE FUTURE &nbsp;·&nbsp; REDUCE PEAK-HOUR USAGE &nbsp;·&nbsp; ENERGY STAR APPLIANCES &nbsp;·&nbsp; ⚡ SWITCH TO LED &nbsp;·&nbsp; UNPLUG STANDBY DEVICES &nbsp;·&nbsp; USE SMART THERMOSTATS &nbsp;·&nbsp; INSULATE YOUR HOME &nbsp;·&nbsp; SOLAR IS THE FUTURE &nbsp;·&nbsp; REDUCE PEAK-HOUR USAGE &nbsp;·&nbsp; ENERGY STAR APPLIANCES &nbsp;·&nbsp;
+  </span>
+</div>
+
+<!-- ══ STATS ══ -->
+<section class="stats-section" id="stats">
+  <div class="stats-header">
+    <h2>WHERE DOES <em>YOUR<br>ENERGY</em> GO?</h2>
+    <p class="stats-note">Average household energy consumption breakdown by category.</p>
+  </div>
+  <div class="cards-grid">
+    <div class="stat-card">
+      <span class="card-icon">🌡️</span>
+      <span class="card-num animate-num" data-val="47">0</span>
+      <span class="card-unit">% of energy use</span>
+      <p class="card-label">Heating & Cooling — the single biggest drain in any home</p>
+    </div>
+    <div class="stat-card">
+      <span class="card-icon">🚿</span>
+      <span class="card-num animate-num" data-val="18">0</span>
+      <span class="card-unit">% of energy use</span>
+      <p class="card-label">Water Heating — often overlooked but massively impactful</p>
+    </div>
+    <div class="stat-card">
+      <span class="card-icon">💡</span>
+      <span class="card-num animate-num" data-val="15">0</span>
+      <span class="card-unit">% of energy use</span>
+      <p class="card-label">Lighting — LED swaps cut this by up to 75% instantly</p>
+    </div>
+    <div class="stat-card">
+      <span class="card-icon">📺</span>
+      <span class="card-num animate-num" data-val="20">0</span>
+      <span class="card-unit">% of energy use</span>
+      <p class="card-label">Appliances & Electronics — including costly standby power</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CHARTS ══ -->
+<section class="chart-section" id="charts">
+
+  <div class="chart-box">
+    <p class="section-label">Annual Comparison</p>
+    <h3 class="chart-title">ENERGY USE BY APPLIANCE</h3>
+    <p class="chart-sub">Average kWh consumed per year, US household</p>
+
+    <div class="bar-row">
+      <span class="bar-label">HVAC</span>
+      <div class="bar-track"><div class="bar-fill" style="background:linear-gradient(90deg,#00c96a,#00ff87)" data-w="87"></div></div>
+      <span class="bar-val" style="color:#00ff87">4,700</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label">Water Htr</span>
+      <div class="bar-track"><div class="bar-fill" style="background:linear-gradient(90deg,#c9a800,#f5e642)" data-w="38"></div></div>
+      <span class="bar-val" style="color:#f5e642">1,800</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label">Washer</span>
+      <div class="bar-track"><div class="bar-fill" style="background:linear-gradient(90deg,#c9a800,#f5e642)" data-w="22"></div></div>
+      <span class="bar-val" style="color:#f5e642">590</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label">Dryer</span>
+      <div class="bar-track"><div class="bar-fill" style="background:linear-gradient(90deg,#c9a800,#f5e642)" data-w="25"></div></div>
+      <span class="bar-val" style="color:#f5e642">769</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label">Fridge</span>
+      <div class="bar-track"><div class="bar-fill" style="background:linear-gradient(90deg,#007dc9,#2fb8ff)" data-w="19"></div></div>
+      <span class="bar-val" style="color:#2fb8ff">489</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label">Lighting</span>
+      <div class="bar-track"><div class="bar-fill" style="background:linear-gradient(90deg,#c95a00,#ff7a2f)" data-w="30"></div></div>
+      <span class="bar-val" style="color:#ff7a2f">880</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label">TV / PC</span>
+      <div class="bar-track"><div class="bar-fill" style="background:linear-gradient(90deg,#c95a00,#ff7a2f)" data-w="16"></div></div>
+      <span class="bar-val" style="color:#ff7a2f">413</span>
+    </div>
+  </div>
+
+  <div class="donut-box">
+    <p class="section-label">Household Carbon Footprint</p>
+    <h3 class="chart-title">CO₂ SOURCES</h3>
+    <p class="chart-sub">% contribution by sector</p>
+    <div class="donut-wrap">
+      <svg width="200" height="200" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="80" fill="none" stroke="#1e1e1e" stroke-width="28"/>
+        <!-- segments -->
+        <circle id="d1" cx="100" cy="100" r="80" fill="none" stroke="#00ff87" stroke-width="28"
+          stroke-dasharray="0 503" stroke-dashoffset="0" transform="rotate(-90 100 100)"/>
+        <circle id="d2" cx="100" cy="100" r="80" fill="none" stroke="#f5e642" stroke-width="28"
+          stroke-dasharray="0 503" stroke-dashoffset="0" transform="rotate(-90 100 100)"/>
+        <circle id="d3" cx="100" cy="100" r="80" fill="none" stroke="#ff7a2f" stroke-width="28"
+          stroke-dasharray="0 503" stroke-dashoffset="0" transform="rotate(-90 100 100)"/>
+        <circle id="d4" cx="100" cy="100" r="80" fill="none" stroke="#2fb8ff" stroke-width="28"
+          stroke-dasharray="0 503" stroke-dashoffset="0" transform="rotate(-90 100 100)"/>
+      </svg>
+      <div class="donut-center">
+        <div class="donut-center-num">2.3T</div>
+        <div class="donut-center-label">tons/yr</div>
+      </div>
+    </div>
+    <div class="donut-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#00ff87"></div><span class="legend-name">Heating &amp; Cooling</span><span class="legend-pct">45%</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f5e642"></div><span class="legend-name">Transportation</span><span class="legend-pct">28%</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ff7a2f"></div><span class="legend-name">Appliances</span><span class="legend-pct">17%</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#2fb8ff"></div><span class="legend-name">Other</span><span class="legend-pct">10%</span></div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══ TIPS ══ -->
+<section class="tips-section" id="tips">
+  <div class="tips-header">
+    <p class="section-label">Action Plan</p>
+    <h2>TOP WAYS TO<br><span>CUT YOUR BILL</span></h2>
+  </div>
+  <div class="tips-grid">
+    <div class="tip-card">
+      <span class="tip-num">01</span>
+      <span class="tip-icon">💡</span>
+      <h4 class="tip-title">Switch to LED Bulbs</h4>
+      <p class="tip-desc">LED bulbs use 75% less energy than traditional incandescents and last up to 25 times longer. Replace high-use fixtures first for the fastest payback.</p>
+      <span class="tip-saving">Save ~$75/yr per home</span>
+    </div>
+    <div class="tip-card">
+      <span class="tip-num">02</span>
+      <span class="tip-icon">🌡️</span>
+      <h4 class="tip-title">Smart Thermostat</h4>
+      <p class="tip-desc">A programmable or learning thermostat can cut heating and cooling costs by 10–12%. Set it to lower temps when you're asleep or away automatically.</p>
+      <span class="tip-saving">Save ~$180/yr</span>
+    </div>
+    <div class="tip-card">
+      <span class="tip-num">03</span>
+      <span class="tip-icon">🔌</span>
+      <h4 class="tip-title">Kill Phantom Loads</h4>
+      <p class="tip-desc">Standby power — TVs, chargers, microwaves — accounts for 5–10% of your bill. Use smart power strips to cut power completely when devices are not in use.</p>
+      <span class="tip-saving">Save ~$100/yr</span>
+    </div>
+    <div class="tip-card">
+      <span class="tip-num">04</span>
+      <span class="tip-icon">🚿</span>
+      <h4 class="tip-title">Low-Flow Showerheads</h4>
+      <p class="tip-desc">Heating water is 18% of your energy use. A low-flow showerhead paired with shorter showers can dramatically reduce your water-heating costs.</p>
+      <span class="tip-saving">Save ~$70/yr</span>
+    </div>
+    <div class="tip-card">
+      <span class="tip-num">05</span>
+      <span class="tip-icon">🌞</span>
+      <h4 class="tip-title">Strategic Window Shading</h4>
+      <p class="tip-desc">Thermal curtains and blinds block summer heat gain and winter heat loss. This passive approach can reduce HVAC load by up to 7% at zero recurring cost.</p>
+      <span class="tip-saving">Save ~$60/yr</span>
+    </div>
+    <div class="tip-card">
+      <span class="tip-num">06</span>
+      <span class="tip-icon">🧺</span>
+      <h4 class="tip-title">Cold Water Washing</h4>
+      <p class="tip-desc">90% of a washing machine's energy goes to heating water. Switching to cold cycles for most loads saves energy without sacrificing clean results.</p>
+      <span class="tip-saving">Save ~$40/yr</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ IMPACT METERS ══ -->
+<section class="impact-section" id="impact">
+  <div class="impact-left">
+    <p class="section-label">Your Potential Impact</p>
+    <h2>THE<br><span>NUMBERS</span><br>DON'T LIE</h2>
+    <p>If every household in the US adopted these six habits, the collective impact would be equivalent to taking 50 million cars off the road permanently.</p>
+  </div>
+  <div class="impact-meter-wrap">
+    <div class="meter-row">
+      <div class="meter-header">
+        <span class="meter-name">Energy Reduction</span>
+        <span class="meter-val">40%</span>
+      </div>
+      <div class="meter-track"><div class="meter-fill green" data-w="40"></div></div>
+    </div>
+    <div class="meter-row">
+      <div class="meter-header">
+        <span class="meter-name">Bill Savings Realized</span>
+        <span class="meter-val">35%</span>
+      </div>
+      <div class="meter-track"><div class="meter-fill green" data-w="35"></div></div>
+    </div>
+    <div class="meter-row">
+      <div class="meter-header">
+        <span class="meter-name">Carbon Footprint Cut</span>
+        <span class="meter-val">28%</span>
+      </div>
+      <div class="meter-track"><div class="meter-fill yellow" data-w="28"></div></div>
+    </div>
+    <div class="meter-row">
+      <div class="meter-header">
+        <span class="meter-name">Peak Grid Demand</span>
+        <span class="meter-val">22%</span>
+      </div>
+      <div class="meter-track"><div class="meter-fill yellow" data-w="22"></div></div>
+    </div>
+    <div class="meter-row">
+      <div class="meter-header">
+        <span class="meter-name">Waste Heat Generated</span>
+        <span class="meter-val">18%</span>
+      </div>
+      <div class="meter-track"><div class="meter-fill orange" data-w="18"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ QUIZ ══ -->
+<section class="quiz-section" id="quiz">
+  <div class="quiz-wrap">
+    <p class="section-label" style="text-align:center">Test Yourself</p>
+    <h2>ENERGY <span>QUIZ</span></h2>
+    <p>How much do you really know about energy conservation?</p>
+    <div class="quiz-question" id="q-text">Loading...</div>
+    <div class="quiz-options" id="q-opts"></div>
+    <div class="quiz-feedback" id="q-feedback"></div>
+    <button class="quiz-next" id="q-next" onclick="nextQ()">NEXT QUESTION →</button>
+    <div class="quiz-progress" id="q-prog"></div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="footer-cta">
+  <h2>START SAVING TODAY. THE PLANET CAN'T WAIT.</h2>
+  <div class="cta-right">
+    <button class="cta-btn" onclick="scrollToTop()">↑ REVIEW THE GUIDE</button>
+    <span class="cta-note">Energy Conservation Tool — Built for a better tomorrow</span>
+  </div>
+</section>
+
+<script>
+// ── INTERSECTION OBSERVER ──
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+
+    // animate number counters
+    el.querySelectorAll('.animate-num').forEach(n => animNum(n));
+
+    // animate bars
+    el.querySelectorAll('.bar-fill').forEach(b => {
+      setTimeout(() => { b.style.width = b.dataset.w + '%'; }, 200);
+    });
+
+    // animate meters
+    el.querySelectorAll('.meter-fill').forEach(m => {
+      setTimeout(() => { m.style.width = m.dataset.w + '%'; }, 300);
+    });
+
+    // animate donut
+    if (el.querySelector('#d1')) animDonut();
+
+    io.unobserve(el);
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('section').forEach(s => io.observe(s));
+
+// ── NUMBER ANIMATION ──
+function animNum(el) {
+  const target = parseFloat(el.dataset.val);
+  const dec = target % 1 !== 0 ? 1 : 0;
+  const dur = 1400, step = 16;
+  let cur = 0, t = 0;
+  const id = setInterval(() => {
+    t += step;
+    cur = target * easeOut(t / dur);
+    el.textContent = cur.toFixed(dec);
+    if (t >= dur) { el.textContent = target.toFixed(dec); clearInterval(id); }
+  }, step);
+}
+
+function easeOut(x) { return 1 - Math.pow(1 - x, 3); }
+
+// ── HERO COUNTERS ──
+setTimeout(() => {
+  document.querySelectorAll('.counter').forEach(el => {
+    const target = parseFloat(el.dataset.target);
+    const dec = target % 1 !== 0 ? 1 : 0;
+    const dur = 1800, step = 16;
+    let t = 0;
+    const id = setInterval(() => {
+      t += step;
+      const cur = target * easeOut(t / dur);
+      el.textContent = cur.toFixed(dec);
+      if (t >= dur) { el.textContent = target.toFixed(dec); clearInterval(id); }
+    }, step);
+  });
+}, 900);
+
+// ── DONUT CHART ──
+function animDonut() {
+  const circum = 2 * Math.PI * 80;
+  const data = [
+    { id: 'd1', pct: 0.45, color: '#00ff87', offset: 0 },
+    { id: 'd2', pct: 0.28, color: '#f5e642', offset: 0.45 },
+    { id: 'd3', pct: 0.17, color: '#ff7a2f', offset: 0.73 },
+    { id: 'd4', pct: 0.10, color: '#2fb8ff', offset: 0.90 },
+  ];
+  data.forEach(d => {
+    const el = document.getElementById(d.id);
+    const arc = d.pct * circum;
+    el.setAttribute('stroke-dasharray', `0 ${circum}`);
+    el.setAttribute('stroke-dashoffset', -d.offset * circum);
+    setTimeout(() => {
+      el.style.transition = 'stroke-dasharray 1.2s ease';
+      el.setAttribute('stroke-dasharray', `${arc} ${circum - arc}`);
+    }, 200);
+  });
+}
+
+// ── QUIZ ──
+const questions = [
+  { q: "Which household system uses the most energy on average?", opts: ["Water Heater","Lighting","HVAC (Heating & Cooling)","Refrigerator"], a: 2, info: "HVAC accounts for ~47% of total home energy use — far more than any other system." },
+  { q: "How much energy do LED bulbs save vs. traditional incandescents?", opts: ["25%","50%","75%","90%"], a: 2, info: "LEDs use ~75% less energy and last 25x longer — the single easiest upgrade." },
+  { q: "What percentage of washing machine energy goes to heating water?", opts: ["40%","65%","80%","90%"], a: 3, info: "~90%! Cold water washing is nearly as effective for most loads and saves big." },
+  { q: "What is 'phantom load' (standby power)?", opts: ["Energy lost during transmission","Power used by devices when off or idle","Extra energy used at peak hours","Solar panel inefficiency"], a: 1, info: "Standby power from chargers, TVs, and appliances can add up to 10% of your bill." },
+  { q: "A smart thermostat can reduce heating & cooling costs by approximately:", opts: ["2–3%","5–7%","10–12%","20–25%"], a: 2, info: "Smart thermostats save 10–12% on heating and ~15% on cooling on average." },
+];
+
+let cur = 0, score = 0, answered = false;
+
+function renderQ() {
+  const q = questions[cur];
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-feedback').textContent = '';
+  document.getElementById('q-next').style.display = 'none';
+  document.getElementById('q-prog').textContent = `Question ${cur + 1} / ${questions.length}  ·  Score: ${score}`;
+  answered = false;
+  const el = document.getElementById('q-opts');
+  el.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = o;
+    btn.onclick = () => pick(i);
+    el.appendChild(btn);
+  });
+}
+
+function pick(i) {
+  if (answered) return;
+  answered = true;
+  const q = questions[cur];
+  const btns = document.querySelectorAll('.quiz-opt');
+  btns.forEach((b, idx) => {
+    b.style.pointerEvents = 'none';
+    if (idx === q.a) b.classList.add('correct');
+    else if (idx === i && i !== q.a) b.classList.add('wrong');
+  });
+  if (i === q.a) { score++; document.getElementById('q-feedback').textContent = '✅ Correct! ' + q.info; }
+  else { document.getElementById('q-feedback').textContent = '❌ Not quite. ' + q.info; }
+  document.getElementById('q-next').style.display = cur < questions.length - 1 ? 'inline-block' : 'none';
+  if (cur === questions.length - 1) {
+    setTimeout(() => {
+      document.getElementById('q-text').textContent = `Quiz complete! You scored ${score}/${questions.length}. ${score >= 4 ? '🌟 Energy expert!' : score >= 2 ? '👍 Good effort!' : '📚 Time to learn more!'}`;
+      document.getElementById('q-opts').innerHTML = '';
+      document.getElementById('q-next').style.display = 'none';
+      document.getElementById('q-prog').textContent = `Final Score: ${score} / ${questions.length}`;
+    }, 1200);
+  }
+}
+
+function nextQ() { cur++; renderQ(); }
+function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+renderQ();
+</script>
+</body>
+</html>
